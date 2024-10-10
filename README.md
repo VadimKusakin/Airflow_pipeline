@@ -46,10 +46,6 @@ After the data has been successfully loaded into PostgreSQL and ClickHouse, you 
    - **Host**: `localhost`
    - **Port**: `8123`
 
-![image](https://github.com/user-attachments/assets/43a43e30-2324-4d09-a5e5-b002d2f48b01)
-![image](https://github.com/user-attachments/assets/11e0fb42-6c6e-4334-a688-bcd111fd68f7)
-![image](https://github.com/user-attachments/assets/058d690f-2a58-4fe3-afe0-9513ca6d6c4d)
-
 
 ## Setup Instructions
 
