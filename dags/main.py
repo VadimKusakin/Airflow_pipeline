@@ -32,7 +32,7 @@ def generate_sales_data():
     def random_date():
         return datetime.now() - timedelta(days=random.randint(0, 365))
 
-    num_records = 1000000
+    num_records = 100000
 
     with open(file_path, mode='w', newline='') as file:
         writer = csv.writer(file)
@@ -122,10 +122,7 @@ clickhouse_client = create_client(
         password=''
     )
 
-def load_data_to_CH():
-    cursor.execute("SELECT * FROM aggregated_sales_data")
-    rows = cursor.fetchall()
-
+def create_CH_table():
     clickhouse_client.command("""
                     CREATE TABLE IF NOT EXISTS aggregated_sales_data (
                         product_id Int32,
@@ -137,6 +134,10 @@ def load_data_to_CH():
                     ) ENGINE = MergeTree()
                     ORDER BY (import_time, product_id);
                     """)
+
+def load_data_to_CH():
+    cursor.execute("SELECT * FROM aggregated_sales_data")
+    rows = cursor.fetchall()
 
     clickhouse_client.insert('aggregated_sales_data', rows,
                                 column_names=['product_id', 'region', 'num_of_sales', 'total_sum', 'average_sale_amount'])
@@ -163,10 +164,16 @@ task_aggregate_data = PythonOperator(
     dag=dag,
 )
 
+task_create_CH_table = PythonOperator(
+    task_id='create_CH_table',
+    python_callable=create_CH_table,
+    dag=dag,
+)
+
 task_load_to_CH = PythonOperator(
     task_id='load_data_to_CH',
     python_callable=load_data_to_CH,
     dag=dag,
 )
 
-task_generate_data >> task_transform_and_load >> task_aggregate_data >> task_load_to_CH
+task_generate_data >> task_transform_and_load >> task_aggregate_data >> task_create_CH_table >> task_load_to_CH
