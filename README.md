@@ -1,3 +1,67 @@
+# Пайплайн обработки данных о продажах
+
+Задача — создать автоматизированный пайплайн обработки и анализа данных о продажах, используя стек технологий: **PostgreSQL**, **ClickHouse**, **Apache Airflow** и **PySpark**. Пайплайн предназначен для обработки 1 миллиона записей о продажах, очистки данных, выполнения агрегаций и сохранения результатов в PostgreSQL и ClickHouse для дальнейшего анализа.
+
+### Основные технологии
+
+- **PostgreSQL**
+- **ClickHouse**
+- **Apache Airflow**
+- **PySpark**
+- **Docker**
+
+### Работа пайплайна
+
+1. **Запуск DAG**: DAG Airflow запускается в 12:45 по московскому времени каждый вторник.
+2. **Генерация данных**: Пайплайн генерирует 1 миллион реалистичных записей о продажах со следующими полями:
+   - `sale_id` (Уникальный идентификатор продажи)
+   - `customer_id` (Идентификатор покупателя)
+   - `product_id` (Идентификатор продукта)
+   - `quantity` (Количество проданных товаров)
+   - `sale_date` (Дата продажи)
+   - `price` (Случайная цена товара)
+   - `region` (Регион покупателя: Север, Юг, Восток или Запад)
+3. **Очистка данных**: Проверка, что все поля данных имеют правильный формат для дальнейшей обработки.
+4. **Вставка в PostgreSQL**: Очищенные данные загружаются в таблицу PostgreSQL для хранения сырых данных о продажах.
+5. **Агрегация данных**: С использованием группировок рассчитываются следующие метрики:
+   - Общие продажи и суммы продаж по регионам и продуктам.
+   - Средняя сумма продаж (`average_sale_amount`) по регионам и продуктам.
+6. **Миграция данных в ClickHouse**: Агрегированные данные мигрируются из PostgreSQL в ClickHouse с добавлением поля `import_date` для отслеживания времени импорта.
+
+### Просмотр данных через DBeaver
+
+После успешной загрузки данных в PostgreSQL и ClickHouse можно использовать **DBeaver** для подключения и просмотра данных.
+
+#### Подключение к PostgreSQL:
+
+   - **Хост**: `localhost`
+   - **Порт**: `5433`
+   - **База данных**: `test`
+   - **Имя пользователя**: `user`
+   - **Пароль**: `password`
+
+#### Подключение к ClickHouse:
+
+   - **Хост**: `localhost`
+   - **Порт**: `8123`
+
+
+## Инструкции по установке
+
+Этот проект был разработан на Mac с процессором серии M (архитектура ARM). Он не был протестирован на других архитектурах, поэтому нет гарантии, что образ Docker и контейнеры будут корректно работать на других системах.
+
+   ```bash
+   git clone https://github.com/VadimKusakin/Airflow_pipeline.git
+   cd Airflow_pipeline
+   docker build -t airflow-with-java .
+   docker-compose up
+   ```
+
+## Контакты
+https://t.me/KusakinVadim
+
+
+
 # Sales Data Pipeline
 
 This project implements an automated pipeline for generating, processing, analyzing, and migrating sales data using a combination of **PostgreSQL**, **ClickHouse**, **Apache Airflow**, and **PySpark**. The pipeline is designed to handle 1 million sales records, clean the data, perform aggregations, and store the results in both PostgreSQL and ClickHouse for further analysis.
@@ -47,6 +111,7 @@ After the data has been successfully loaded into PostgreSQL and ClickHouse, you 
    - **Port**: `8123`
 
 
+
 ## Setup Instructions
 
 This project was developed on a MacBook with an M-series processor (ARM architecture). It has not been tested on other architectures, so there is no guarantee that the Docker image and containers will run correctly on different systems.
@@ -58,7 +123,5 @@ This project was developed on a MacBook with an M-series processor (ARM architec
    docker-compose up
    ```
 
-# Contact
+## Contact
 https://t.me/KusakinVadim
-
-For any questions or issues regarding the project, feel free to contact the repository owner.
